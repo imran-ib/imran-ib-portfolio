@@ -37,6 +37,7 @@ node_modules/
 backend/node_modules/
 backend/.env
 frontend/node_modules/
+frontend/config.js
 jspm_packages/
 
 # TypeScript v1 declaration files
