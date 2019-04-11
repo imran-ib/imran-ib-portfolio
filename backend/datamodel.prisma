@@ -1,0 +1,44 @@
+enum Permission {
+  ADMIN
+  USER
+  ADDBLOG
+  UPDATEBLOG
+  EDITBLOG
+  DELETEBLOG
+  UPRDATEPERMISSION
+}
+
+type User {
+  id: ID! @unique
+  name: String!
+  email: String! @unique
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: [Permission]
+  blog: Blog
+}
+
+type Portfolio {
+  id: ID! @unique
+  title: String!
+  company: String!
+  location: String!
+  position: String!
+  description: String!
+  startDate: DateTime
+  endDate: DateTime
+  user: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Blog {
+  id: ID! @unique
+  title: String!
+  body: String!
+  image: String
+  author: User!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
