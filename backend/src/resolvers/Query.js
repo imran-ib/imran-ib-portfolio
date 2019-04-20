@@ -6,6 +6,7 @@ const Query = {
   portfolio: forwardTo("db"),
   portfolios: forwardTo("db"),
   blog: forwardTo("db"),
+  blogs: forwardTo("db"),
   me(parent, args, { db, request }, info) {
     if (!request.userId) {
       return null;

@@ -7,38 +7,49 @@ enum Permission {
   DELETEBLOG
   UPRDATEPERMISSION
 }
-
 type User {
-  id: ID! @unique
+  id: ID! @id
   name: String!
   email: String! @unique
   password: String!
   resetToken: String
   resetTokenExpiry: Float
-  permissions: [Permission]
-  blog: Blog
+  blogs: [Blog]!
+  permissions: [Permission!]! @default(value: USER) @scalarList(strategy: RELATION)
+  comments: [Comment!]!
 }
 
 type Portfolio {
-  id: ID! @unique
+  id: ID! @id
   title: String!
   company: String!
   location: String!
   position: String!
   description: String!
-  startDate: DateTime
+  startDate: DateTime 
   endDate: DateTime
   user: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
 }
 
 type Blog {
-  id: ID! @unique
+  id: ID! @id
   title: String!
+  subTitle: String!
+  author: User!
+  slug: String! @unique
   body: String!
   image: String
-  author: User!
-  createdAt: DateTime!
-  updatedAt: DateTime!
+  isPublished: Boolean! @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+  comments: [Comment!]!
+}
+type Comment {
+  id: ID! @id
+  createdAt: DateTime! @createdAt
+  text: String!
+  blog: Blog!
+  writtenBy: User!
 }

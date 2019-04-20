@@ -35,7 +35,8 @@ export default class Header extends React.Component {
   }
   render() {
     const { className } = this.props;
-    const MyColor = className === "port-nav-default" ? "#2C3E50" : "";
+    const MyColor =
+      className === "port-nav-default" ? "#2C3E50" : "transparent";
     return (
       <HeaderStyles>
         <CurrentUser>

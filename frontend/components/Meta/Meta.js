@@ -7,6 +7,10 @@ const Meta = () => (
     <link rel="shortcut icon" href="/static/favicon/favicon.ico" />
     <link rel="stylesheet" type="text/css" href="/static/nprogress.css" />
     <link rel="stylesheet" href="/static/bootstrap.min.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
 
     <title>Imran</title>
   </Head>

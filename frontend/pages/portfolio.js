@@ -14,3 +14,5 @@ class PortfolioPage extends Component {
 }
 
 export default PortfolioPage;
+
+// TODO: Remove isAdmin Functionality from portfolioCard and use IsAdmin HOC

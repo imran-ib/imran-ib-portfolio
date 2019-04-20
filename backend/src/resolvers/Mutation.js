@@ -21,6 +21,7 @@ const Mutation = {
     let email = args.email;
     if (regexEmail.test(email)) {
       // lowercase email
+
       email = await email.toLowerCase();
     } else {
       throw new Error(ErrorMessages.validEmail);
@@ -273,6 +274,31 @@ const Mutation = {
       },
       info
     );
+  },
+  async createBlog(parent, args, { db, request }, info) {
+    //1. Check if the user sign in
+    if (!request.userId) {
+      throw new Error(ErrorMessages.loginError);
+    }
+    //2.  check if they have correct permission
+    hasPermission(request.user, ["ADMIN", "ADDBLOG"]);
+    //3. save portfolio db
+    const blog = await db.mutation.createBlog(
+      {
+        data: {
+          author: {
+            connect: {
+              id: request.userId
+            }
+          },
+          ...args
+        }
+      },
+      info
+    );
+    console.log(blog);
+    //4. return portfolio
+    return blog;
   }
 };
 

@@ -6,8 +6,8 @@ export class BlogsPage extends Component {
   render() {
     return (
       <>
-        <HeaderBaseLayout />
-        <div className="p-top">
+        <HeaderBaseLayout headerType="index" />
+        <div>
           <Blogs />
         </div>
       </>

@@ -3,7 +3,6 @@
 type SuccessMessage{
   message: String!
 }
-
 type Mutation {
   RegisterUser(email: String! password: String! name: String!): User!
   SignIn(email: String! password: String!): User!
@@ -11,30 +10,37 @@ type Mutation {
   requestReset(email: String!) : SuccessMessage
   resetPassword(resetToken: String! password: String! confirmPassword: String!): User!
   updatePermission(permissions: [Permission], userId: ID!): User
+  
   createPortfolio(
-    title: String!,
-    company: String!,
-    location: String!,
-    position: String!,
-    description: String!,
-    startDate: DateTime,
-    endDate: DateTime
+        title: String!,
+        company: String!,
+        location: String!,
+        position: String!,
+        description: String!,
+        startDate: DateTime,
+        endDate: DateTime
     ): Portfolio!
 
     updatePortfolio(
-    id: ID!,
-    title: String!,
-    company: String!,
-    location: String!,
-    position: String!,
-    description: String!,
-    startDate: DateTime,
-    endDate: DateTime): Portfolio!
-
-    deletePortfolio(id: ID!): Portfolio
-      
+        id: ID!,
+        title: String!,
+        company: String!,
+        location: String!,
+        position: String!,
+        description: String!,
+        startDate: DateTime,
+        endDate: DateTime): Portfolio!
+  deletePortfolio(id: ID!): Portfolio   
+  createBlog(
+      id: ID! 
+      title: String!
+      subTitle: String!
+      slug: String!
+      body: String!
+      image: String
+      isPublished: Boolean!
+        ): Blog!
 }
-
 
 type Query {
   me: User
@@ -44,8 +50,6 @@ type Query {
   portfolios(where: PortfolioWhereInput, orderBy: PortfolioOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Portfolio]
   blogs(where: BlogWhereInput, orderBy: BlogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Blog]!
 }
-
-
 
 type User {
   id: ID!

@@ -1,7 +1,11 @@
-# source: https://eu1.prisma.sh/imran-irshad-417aeb/my-portfolio/dev
-# timestamp: Sat Mar 30 2019 23:59:27 GMT+0500 (Pakistan Standard Time)
+# source: https://eu1.prisma.sh/imran-irshad-417aeb/portfolio/dev
+# timestamp: Fri Apr 19 2019 23:04:39 GMT+0500 (Pakistan Standard Time)
 
 type AggregateBlog {
+  count: Int!
+}
+
+type AggregateComment {
   count: Int!
 }
 
@@ -21,11 +25,15 @@ type BatchPayload {
 type Blog implements Node {
   id: ID!
   title: String!
+  subTitle: String!
+  author: User!
+  slug: String!
   body: String!
   image: String
-  author: User!
+  isPublished: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
 
 """A connection to a list of items."""
@@ -41,21 +49,45 @@ type BlogConnection {
 input BlogCreateInput {
   id: ID
   title: String!
+  subTitle: String!
+  slug: String!
   body: String!
   image: String
-  author: UserCreateOneWithoutBlogInput!
+  isPublished: Boolean
+  author: UserCreateOneWithoutBlogsInput!
+  comments: CommentCreateManyWithoutBlogInput
 }
 
-input BlogCreateOneWithoutAuthorInput {
-  create: BlogCreateWithoutAuthorInput
+input BlogCreateManyWithoutAuthorInput {
+  create: [BlogCreateWithoutAuthorInput!]
+  connect: [BlogWhereUniqueInput!]
+}
+
+input BlogCreateOneWithoutCommentsInput {
+  create: BlogCreateWithoutCommentsInput
   connect: BlogWhereUniqueInput
 }
 
 input BlogCreateWithoutAuthorInput {
   id: ID
   title: String!
+  subTitle: String!
+  slug: String!
   body: String!
   image: String
+  isPublished: Boolean
+  comments: CommentCreateManyWithoutBlogInput
+}
+
+input BlogCreateWithoutCommentsInput {
+  id: ID
+  title: String!
+  subTitle: String!
+  slug: String!
+  body: String!
+  image: String
+  isPublished: Boolean
+  author: UserCreateOneWithoutBlogsInput!
 }
 
 """An edge in a connection."""
@@ -72,10 +104,16 @@ enum BlogOrderByInput {
   id_DESC
   title_ASC
   title_DESC
+  subTitle_ASC
+  subTitle_DESC
+  slug_ASC
+  slug_DESC
   body_ASC
   body_DESC
   image_ASC
   image_DESC
+  isPublished_ASC
+  isPublished_DESC
   createdAt_ASC
   createdAt_DESC
   updatedAt_ASC
@@ -85,10 +123,312 @@ enum BlogOrderByInput {
 type BlogPreviousValues {
   id: ID!
   title: String!
+  subTitle: String!
+  slug: String!
   body: String!
   image: String
+  isPublished: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+input BlogScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [BlogScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [BlogScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [BlogScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  title: String
+
+  """All values that are not equal to given value."""
+  title_not: String
+
+  """All values that are contained in given list."""
+  title_in: [String!]
+
+  """All values that are not contained in given list."""
+  title_not_in: [String!]
+
+  """All values less than the given value."""
+  title_lt: String
+
+  """All values less than or equal the given value."""
+  title_lte: String
+
+  """All values greater than the given value."""
+  title_gt: String
+
+  """All values greater than or equal the given value."""
+  title_gte: String
+
+  """All values containing the given string."""
+  title_contains: String
+
+  """All values not containing the given string."""
+  title_not_contains: String
+
+  """All values starting with the given string."""
+  title_starts_with: String
+
+  """All values not starting with the given string."""
+  title_not_starts_with: String
+
+  """All values ending with the given string."""
+  title_ends_with: String
+
+  """All values not ending with the given string."""
+  title_not_ends_with: String
+  subTitle: String
+
+  """All values that are not equal to given value."""
+  subTitle_not: String
+
+  """All values that are contained in given list."""
+  subTitle_in: [String!]
+
+  """All values that are not contained in given list."""
+  subTitle_not_in: [String!]
+
+  """All values less than the given value."""
+  subTitle_lt: String
+
+  """All values less than or equal the given value."""
+  subTitle_lte: String
+
+  """All values greater than the given value."""
+  subTitle_gt: String
+
+  """All values greater than or equal the given value."""
+  subTitle_gte: String
+
+  """All values containing the given string."""
+  subTitle_contains: String
+
+  """All values not containing the given string."""
+  subTitle_not_contains: String
+
+  """All values starting with the given string."""
+  subTitle_starts_with: String
+
+  """All values not starting with the given string."""
+  subTitle_not_starts_with: String
+
+  """All values ending with the given string."""
+  subTitle_ends_with: String
+
+  """All values not ending with the given string."""
+  subTitle_not_ends_with: String
+  slug: String
+
+  """All values that are not equal to given value."""
+  slug_not: String
+
+  """All values that are contained in given list."""
+  slug_in: [String!]
+
+  """All values that are not contained in given list."""
+  slug_not_in: [String!]
+
+  """All values less than the given value."""
+  slug_lt: String
+
+  """All values less than or equal the given value."""
+  slug_lte: String
+
+  """All values greater than the given value."""
+  slug_gt: String
+
+  """All values greater than or equal the given value."""
+  slug_gte: String
+
+  """All values containing the given string."""
+  slug_contains: String
+
+  """All values not containing the given string."""
+  slug_not_contains: String
+
+  """All values starting with the given string."""
+  slug_starts_with: String
+
+  """All values not starting with the given string."""
+  slug_not_starts_with: String
+
+  """All values ending with the given string."""
+  slug_ends_with: String
+
+  """All values not ending with the given string."""
+  slug_not_ends_with: String
+  body: String
+
+  """All values that are not equal to given value."""
+  body_not: String
+
+  """All values that are contained in given list."""
+  body_in: [String!]
+
+  """All values that are not contained in given list."""
+  body_not_in: [String!]
+
+  """All values less than the given value."""
+  body_lt: String
+
+  """All values less than or equal the given value."""
+  body_lte: String
+
+  """All values greater than the given value."""
+  body_gt: String
+
+  """All values greater than or equal the given value."""
+  body_gte: String
+
+  """All values containing the given string."""
+  body_contains: String
+
+  """All values not containing the given string."""
+  body_not_contains: String
+
+  """All values starting with the given string."""
+  body_starts_with: String
+
+  """All values not starting with the given string."""
+  body_not_starts_with: String
+
+  """All values ending with the given string."""
+  body_ends_with: String
+
+  """All values not ending with the given string."""
+  body_not_ends_with: String
+  image: String
+
+  """All values that are not equal to given value."""
+  image_not: String
+
+  """All values that are contained in given list."""
+  image_in: [String!]
+
+  """All values that are not contained in given list."""
+  image_not_in: [String!]
+
+  """All values less than the given value."""
+  image_lt: String
+
+  """All values less than or equal the given value."""
+  image_lte: String
+
+  """All values greater than the given value."""
+  image_gt: String
+
+  """All values greater than or equal the given value."""
+  image_gte: String
+
+  """All values containing the given string."""
+  image_contains: String
+
+  """All values not containing the given string."""
+  image_not_contains: String
+
+  """All values starting with the given string."""
+  image_starts_with: String
+
+  """All values not starting with the given string."""
+  image_not_starts_with: String
+
+  """All values ending with the given string."""
+  image_ends_with: String
+
+  """All values not ending with the given string."""
+  image_not_ends_with: String
+  isPublished: Boolean
+
+  """All values that are not equal to given value."""
+  isPublished_not: Boolean
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
 }
 
 type BlogSubscriptionPayload {
@@ -132,33 +472,89 @@ input BlogSubscriptionWhereInput {
 
 input BlogUpdateInput {
   title: String
+  subTitle: String
+  slug: String
   body: String
   image: String
-  author: UserUpdateOneRequiredWithoutBlogInput
+  isPublished: Boolean
+  author: UserUpdateOneRequiredWithoutBlogsInput
+  comments: CommentUpdateManyWithoutBlogInput
+}
+
+input BlogUpdateManyDataInput {
+  title: String
+  subTitle: String
+  slug: String
+  body: String
+  image: String
+  isPublished: Boolean
 }
 
 input BlogUpdateManyMutationInput {
   title: String
+  subTitle: String
+  slug: String
   body: String
   image: String
+  isPublished: Boolean
 }
 
-input BlogUpdateOneWithoutAuthorInput {
-  create: BlogCreateWithoutAuthorInput
+input BlogUpdateManyWithoutAuthorInput {
+  create: [BlogCreateWithoutAuthorInput!]
+  connect: [BlogWhereUniqueInput!]
+  set: [BlogWhereUniqueInput!]
+  disconnect: [BlogWhereUniqueInput!]
+  delete: [BlogWhereUniqueInput!]
+  update: [BlogUpdateWithWhereUniqueWithoutAuthorInput!]
+  updateMany: [BlogUpdateManyWithWhereNestedInput!]
+  deleteMany: [BlogScalarWhereInput!]
+  upsert: [BlogUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input BlogUpdateManyWithWhereNestedInput {
+  where: BlogScalarWhereInput!
+  data: BlogUpdateManyDataInput!
+}
+
+input BlogUpdateOneRequiredWithoutCommentsInput {
+  create: BlogCreateWithoutCommentsInput
   connect: BlogWhereUniqueInput
-  disconnect: Boolean
-  delete: Boolean
-  update: BlogUpdateWithoutAuthorDataInput
-  upsert: BlogUpsertWithoutAuthorInput
+  update: BlogUpdateWithoutCommentsDataInput
+  upsert: BlogUpsertWithoutCommentsInput
 }
 
 input BlogUpdateWithoutAuthorDataInput {
   title: String
+  subTitle: String
+  slug: String
   body: String
   image: String
+  isPublished: Boolean
+  comments: CommentUpdateManyWithoutBlogInput
 }
 
-input BlogUpsertWithoutAuthorInput {
+input BlogUpdateWithoutCommentsDataInput {
+  title: String
+  subTitle: String
+  slug: String
+  body: String
+  image: String
+  isPublished: Boolean
+  author: UserUpdateOneRequiredWithoutBlogsInput
+}
+
+input BlogUpdateWithWhereUniqueWithoutAuthorInput {
+  where: BlogWhereUniqueInput!
+  data: BlogUpdateWithoutAuthorDataInput!
+}
+
+input BlogUpsertWithoutCommentsInput {
+  update: BlogUpdateWithoutCommentsDataInput!
+  create: BlogCreateWithoutCommentsInput!
+}
+
+input BlogUpsertWithWhereUniqueWithoutAuthorInput {
+  where: BlogWhereUniqueInput!
   update: BlogUpdateWithoutAuthorDataInput!
   create: BlogCreateWithoutAuthorInput!
 }
@@ -252,6 +648,86 @@ input BlogWhereInput {
 
   """All values not ending with the given string."""
   title_not_ends_with: String
+  subTitle: String
+
+  """All values that are not equal to given value."""
+  subTitle_not: String
+
+  """All values that are contained in given list."""
+  subTitle_in: [String!]
+
+  """All values that are not contained in given list."""
+  subTitle_not_in: [String!]
+
+  """All values less than the given value."""
+  subTitle_lt: String
+
+  """All values less than or equal the given value."""
+  subTitle_lte: String
+
+  """All values greater than the given value."""
+  subTitle_gt: String
+
+  """All values greater than or equal the given value."""
+  subTitle_gte: String
+
+  """All values containing the given string."""
+  subTitle_contains: String
+
+  """All values not containing the given string."""
+  subTitle_not_contains: String
+
+  """All values starting with the given string."""
+  subTitle_starts_with: String
+
+  """All values not starting with the given string."""
+  subTitle_not_starts_with: String
+
+  """All values ending with the given string."""
+  subTitle_ends_with: String
+
+  """All values not ending with the given string."""
+  subTitle_not_ends_with: String
+  slug: String
+
+  """All values that are not equal to given value."""
+  slug_not: String
+
+  """All values that are contained in given list."""
+  slug_in: [String!]
+
+  """All values that are not contained in given list."""
+  slug_not_in: [String!]
+
+  """All values less than the given value."""
+  slug_lt: String
+
+  """All values less than or equal the given value."""
+  slug_lte: String
+
+  """All values greater than the given value."""
+  slug_gt: String
+
+  """All values greater than or equal the given value."""
+  slug_gte: String
+
+  """All values containing the given string."""
+  slug_contains: String
+
+  """All values not containing the given string."""
+  slug_not_contains: String
+
+  """All values starting with the given string."""
+  slug_starts_with: String
+
+  """All values not starting with the given string."""
+  slug_not_starts_with: String
+
+  """All values ending with the given string."""
+  slug_ends_with: String
+
+  """All values not ending with the given string."""
+  slug_not_ends_with: String
   body: String
 
   """All values that are not equal to given value."""
@@ -332,6 +808,10 @@ input BlogWhereInput {
 
   """All values not ending with the given string."""
   image_not_ends_with: String
+  isPublished: Boolean
+
+  """All values that are not equal to given value."""
+  isPublished_not: Boolean
   createdAt: DateTime
 
   """All values that are not equal to given value."""
@@ -377,9 +857,430 @@ input BlogWhereInput {
   """All values greater than or equal the given value."""
   updatedAt_gte: DateTime
   author: UserWhereInput
+  comments_every: CommentWhereInput
+  comments_some: CommentWhereInput
+  comments_none: CommentWhereInput
 }
 
 input BlogWhereUniqueInput {
+  id: ID
+  slug: String
+}
+
+type Comment implements Node {
+  id: ID!
+  createdAt: DateTime!
+  text: String!
+  blog: Blog!
+  writtenBy: User!
+}
+
+"""A connection to a list of items."""
+type CommentConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [CommentEdge]!
+  aggregate: AggregateComment!
+}
+
+input CommentCreateInput {
+  id: ID
+  text: String!
+  blog: BlogCreateOneWithoutCommentsInput!
+  writtenBy: UserCreateOneWithoutCommentsInput!
+}
+
+input CommentCreateManyWithoutBlogInput {
+  create: [CommentCreateWithoutBlogInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CommentCreateManyWithoutWrittenByInput {
+  create: [CommentCreateWithoutWrittenByInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CommentCreateWithoutBlogInput {
+  id: ID
+  text: String!
+  writtenBy: UserCreateOneWithoutCommentsInput!
+}
+
+input CommentCreateWithoutWrittenByInput {
+  id: ID
+  text: String!
+  blog: BlogCreateOneWithoutCommentsInput!
+}
+
+"""An edge in a connection."""
+type CommentEdge {
+  """The item at the end of the edge."""
+  node: Comment!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum CommentOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  text_ASC
+  text_DESC
+}
+
+type CommentPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  text: String!
+}
+
+input CommentScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CommentScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CommentScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CommentScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  text: String
+
+  """All values that are not equal to given value."""
+  text_not: String
+
+  """All values that are contained in given list."""
+  text_in: [String!]
+
+  """All values that are not contained in given list."""
+  text_not_in: [String!]
+
+  """All values less than the given value."""
+  text_lt: String
+
+  """All values less than or equal the given value."""
+  text_lte: String
+
+  """All values greater than the given value."""
+  text_gt: String
+
+  """All values greater than or equal the given value."""
+  text_gte: String
+
+  """All values containing the given string."""
+  text_contains: String
+
+  """All values not containing the given string."""
+  text_not_contains: String
+
+  """All values starting with the given string."""
+  text_starts_with: String
+
+  """All values not starting with the given string."""
+  text_not_starts_with: String
+
+  """All values ending with the given string."""
+  text_ends_with: String
+
+  """All values not ending with the given string."""
+  text_not_ends_with: String
+}
+
+type CommentSubscriptionPayload {
+  mutation: MutationType!
+  node: Comment
+  updatedFields: [String!]
+  previousValues: CommentPreviousValues
+}
+
+input CommentSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CommentSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CommentSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CommentSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CommentWhereInput
+}
+
+input CommentUpdateInput {
+  text: String
+  blog: BlogUpdateOneRequiredWithoutCommentsInput
+  writtenBy: UserUpdateOneRequiredWithoutCommentsInput
+}
+
+input CommentUpdateManyDataInput {
+  text: String
+}
+
+input CommentUpdateManyMutationInput {
+  text: String
+}
+
+input CommentUpdateManyWithoutBlogInput {
+  create: [CommentCreateWithoutBlogInput!]
+  connect: [CommentWhereUniqueInput!]
+  set: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  delete: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueWithoutBlogInput!]
+  updateMany: [CommentUpdateManyWithWhereNestedInput!]
+  deleteMany: [CommentScalarWhereInput!]
+  upsert: [CommentUpsertWithWhereUniqueWithoutBlogInput!]
+}
+
+input CommentUpdateManyWithoutWrittenByInput {
+  create: [CommentCreateWithoutWrittenByInput!]
+  connect: [CommentWhereUniqueInput!]
+  set: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  delete: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueWithoutWrittenByInput!]
+  updateMany: [CommentUpdateManyWithWhereNestedInput!]
+  deleteMany: [CommentScalarWhereInput!]
+  upsert: [CommentUpsertWithWhereUniqueWithoutWrittenByInput!]
+}
+
+input CommentUpdateManyWithWhereNestedInput {
+  where: CommentScalarWhereInput!
+  data: CommentUpdateManyDataInput!
+}
+
+input CommentUpdateWithoutBlogDataInput {
+  text: String
+  writtenBy: UserUpdateOneRequiredWithoutCommentsInput
+}
+
+input CommentUpdateWithoutWrittenByDataInput {
+  text: String
+  blog: BlogUpdateOneRequiredWithoutCommentsInput
+}
+
+input CommentUpdateWithWhereUniqueWithoutBlogInput {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateWithoutBlogDataInput!
+}
+
+input CommentUpdateWithWhereUniqueWithoutWrittenByInput {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateWithoutWrittenByDataInput!
+}
+
+input CommentUpsertWithWhereUniqueWithoutBlogInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateWithoutBlogDataInput!
+  create: CommentCreateWithoutBlogInput!
+}
+
+input CommentUpsertWithWhereUniqueWithoutWrittenByInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateWithoutWrittenByDataInput!
+  create: CommentCreateWithoutWrittenByInput!
+}
+
+input CommentWhereInput {
+  """Logical AND on all given filters."""
+  AND: [CommentWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [CommentWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [CommentWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  text: String
+
+  """All values that are not equal to given value."""
+  text_not: String
+
+  """All values that are contained in given list."""
+  text_in: [String!]
+
+  """All values that are not contained in given list."""
+  text_not_in: [String!]
+
+  """All values less than the given value."""
+  text_lt: String
+
+  """All values less than or equal the given value."""
+  text_lte: String
+
+  """All values greater than the given value."""
+  text_gt: String
+
+  """All values greater than or equal the given value."""
+  text_gte: String
+
+  """All values containing the given string."""
+  text_contains: String
+
+  """All values not containing the given string."""
+  text_not_contains: String
+
+  """All values starting with the given string."""
+  text_starts_with: String
+
+  """All values not starting with the given string."""
+  text_not_starts_with: String
+
+  """All values ending with the given string."""
+  text_ends_with: String
+
+  """All values not ending with the given string."""
+  text_not_ends_with: String
+  blog: BlogWhereInput
+  writtenBy: UserWhereInput
+}
+
+input CommentWhereUniqueInput {
   id: ID
 }
 
@@ -394,21 +1295,27 @@ scalar Long
 type Mutation {
   createPortfolio(data: PortfolioCreateInput!): Portfolio!
   createBlog(data: BlogCreateInput!): Blog!
+  createComment(data: CommentCreateInput!): Comment!
   createUser(data: UserCreateInput!): User!
   updatePortfolio(data: PortfolioUpdateInput!, where: PortfolioWhereUniqueInput!): Portfolio
   updateBlog(data: BlogUpdateInput!, where: BlogWhereUniqueInput!): Blog
+  updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deletePortfolio(where: PortfolioWhereUniqueInput!): Portfolio
   deleteBlog(where: BlogWhereUniqueInput!): Blog
+  deleteComment(where: CommentWhereUniqueInput!): Comment
   deleteUser(where: UserWhereUniqueInput!): User
   upsertPortfolio(where: PortfolioWhereUniqueInput!, create: PortfolioCreateInput!, update: PortfolioUpdateInput!): Portfolio!
   upsertBlog(where: BlogWhereUniqueInput!, create: BlogCreateInput!, update: BlogUpdateInput!): Blog!
+  upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyPortfolios(data: PortfolioUpdateManyMutationInput!, where: PortfolioWhereInput): BatchPayload!
   updateManyBlogs(data: BlogUpdateManyMutationInput!, where: BlogWhereInput): BatchPayload!
+  updateManyComments(data: CommentUpdateManyMutationInput!, where: CommentWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   deleteManyPortfolios(where: PortfolioWhereInput): BatchPayload!
   deleteManyBlogs(where: BlogWhereInput): BatchPayload!
+  deleteManyComments(where: CommentWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
@@ -937,12 +1844,15 @@ input PortfolioWhereUniqueInput {
 type Query {
   portfolios(where: PortfolioWhereInput, orderBy: PortfolioOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Portfolio]!
   blogs(where: BlogWhereInput, orderBy: BlogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Blog]!
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   portfolio(where: PortfolioWhereUniqueInput!): Portfolio
   blog(where: BlogWhereUniqueInput!): Blog
+  comment(where: CommentWhereUniqueInput!): Comment
   user(where: UserWhereUniqueInput!): User
   portfoliosConnection(where: PortfolioWhereInput, orderBy: PortfolioOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): PortfolioConnection!
   blogsConnection(where: BlogWhereInput, orderBy: BlogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BlogConnection!
+  commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
@@ -955,6 +1865,7 @@ type Query {
 type Subscription {
   portfolio(where: PortfolioSubscriptionWhereInput): PortfolioSubscriptionPayload
   blog(where: BlogSubscriptionWhereInput): BlogSubscriptionPayload
+  comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
@@ -965,8 +1876,9 @@ type User implements Node {
   password: String!
   resetToken: String
   resetTokenExpiry: Float
+  blogs(where: BlogWhereInput, orderBy: BlogOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Blog!]
   permissions: [Permission!]!
-  blog: Blog
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
 
 """A connection to a list of items."""
@@ -987,7 +1899,8 @@ input UserCreateInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserCreatepermissionsInput
-  blog: BlogCreateOneWithoutAuthorInput
+  blogs: BlogCreateManyWithoutAuthorInput
+  comments: CommentCreateManyWithoutWrittenByInput
 }
 
 input UserCreateOneInput {
@@ -995,8 +1908,13 @@ input UserCreateOneInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateOneWithoutBlogInput {
-  create: UserCreateWithoutBlogInput
+input UserCreateOneWithoutBlogsInput {
+  create: UserCreateWithoutBlogsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutCommentsInput {
+  create: UserCreateWithoutCommentsInput
   connect: UserWhereUniqueInput
 }
 
@@ -1004,7 +1922,7 @@ input UserCreatepermissionsInput {
   set: [Permission!]
 }
 
-input UserCreateWithoutBlogInput {
+input UserCreateWithoutBlogsInput {
   id: ID
   name: String!
   email: String!
@@ -1012,6 +1930,18 @@ input UserCreateWithoutBlogInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserCreatepermissionsInput
+  comments: CommentCreateManyWithoutWrittenByInput
+}
+
+input UserCreateWithoutCommentsInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserCreatepermissionsInput
+  blogs: BlogCreateManyWithoutAuthorInput
 }
 
 """An edge in a connection."""
@@ -1036,10 +1966,6 @@ enum UserOrderByInput {
   resetToken_DESC
   resetTokenExpiry_ASC
   resetTokenExpiry_DESC
-  updatedAt_ASC
-  updatedAt_DESC
-  createdAt_ASC
-  createdAt_DESC
 }
 
 type UserPreviousValues {
@@ -1098,7 +2024,8 @@ input UserUpdateDataInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
-  blog: BlogUpdateOneWithoutAuthorInput
+  blogs: BlogUpdateManyWithoutAuthorInput
+  comments: CommentUpdateManyWithoutWrittenByInput
 }
 
 input UserUpdateInput {
@@ -1108,7 +2035,8 @@ input UserUpdateInput {
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
-  blog: BlogUpdateOneWithoutAuthorInput
+  blogs: BlogUpdateManyWithoutAuthorInput
+  comments: CommentUpdateManyWithoutWrittenByInput
 }
 
 input UserUpdateManyMutationInput {
@@ -1127,24 +2055,42 @@ input UserUpdateOneRequiredInput {
   upsert: UserUpsertNestedInput
 }
 
-input UserUpdateOneRequiredWithoutBlogInput {
-  create: UserCreateWithoutBlogInput
+input UserUpdateOneRequiredWithoutBlogsInput {
+  create: UserCreateWithoutBlogsInput
   connect: UserWhereUniqueInput
-  update: UserUpdateWithoutBlogDataInput
-  upsert: UserUpsertWithoutBlogInput
+  update: UserUpdateWithoutBlogsDataInput
+  upsert: UserUpsertWithoutBlogsInput
+}
+
+input UserUpdateOneRequiredWithoutCommentsInput {
+  create: UserCreateWithoutCommentsInput
+  connect: UserWhereUniqueInput
+  update: UserUpdateWithoutCommentsDataInput
+  upsert: UserUpsertWithoutCommentsInput
 }
 
 input UserUpdatepermissionsInput {
   set: [Permission!]
 }
 
-input UserUpdateWithoutBlogDataInput {
+input UserUpdateWithoutBlogsDataInput {
   name: String
   email: String
   password: String
   resetToken: String
   resetTokenExpiry: Float
   permissions: UserUpdatepermissionsInput
+  comments: CommentUpdateManyWithoutWrittenByInput
+}
+
+input UserUpdateWithoutCommentsDataInput {
+  name: String
+  email: String
+  password: String
+  resetToken: String
+  resetTokenExpiry: Float
+  permissions: UserUpdatepermissionsInput
+  blogs: BlogUpdateManyWithoutAuthorInput
 }
 
 input UserUpsertNestedInput {
@@ -1152,9 +2098,14 @@ input UserUpsertNestedInput {
   create: UserCreateInput!
 }
 
-input UserUpsertWithoutBlogInput {
-  update: UserUpdateWithoutBlogDataInput!
-  create: UserCreateWithoutBlogInput!
+input UserUpsertWithoutBlogsInput {
+  update: UserUpdateWithoutBlogsDataInput!
+  create: UserCreateWithoutBlogsInput!
+}
+
+input UserUpsertWithoutCommentsInput {
+  update: UserUpdateWithoutCommentsDataInput!
+  create: UserCreateWithoutCommentsInput!
 }
 
 input UserWhereInput {
@@ -1388,7 +2339,12 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   resetTokenExpiry_gte: Float
-  blog: BlogWhereInput
+  blogs_every: BlogWhereInput
+  blogs_some: BlogWhereInput
+  blogs_none: BlogWhereInput
+  comments_every: CommentWhereInput
+  comments_some: CommentWhereInput
+  comments_none: CommentWhereInput
 }
 
 input UserWhereUniqueInput {
