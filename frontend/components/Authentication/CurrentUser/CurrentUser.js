@@ -23,4 +23,5 @@ class CurrentUser extends Component {
 }
 
 export default CurrentUser;
+// export current user query so we can use it in other components
 export { CURRENT_USER_QUERY };
